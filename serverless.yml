@@ -9,26 +9,25 @@ provider:
   name: aws
   runtime: nodejs16.x
   region: ap-northeast-2
-  iam:
-    role:
+  iam: 
+    role: 
       statements:
-        - Effect: Allow
+        - Effect: "Allow"
           Action:
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-            - dynamodb:UpdateItem
-            - dynamodb:DeleteItem
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+            - "dynamodb:*"
+          Resource: "*"
 
 functions:
   websocketHandler:
     handler: src/handler.websocketHandler
     events:
       - websocket:
+          route: $disconnect
+      - websocket:
           route: $connect
-      # - websocket:
-      #     route: $disconnect
 
 resources:
   Resources:
@@ -36,10 +35,10 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: userId
+          - AttributeName: user_id
             AttributeType: S
         KeySchema:
-          - AttributeName: userId
+          - AttributeName: user_id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: CHAT_USER
