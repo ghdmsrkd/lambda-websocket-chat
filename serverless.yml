@@ -33,6 +33,13 @@ functions:
     events:
       - websocket:
           route: sendMessage
+  roomHandler:
+    handler: src/handler.roomHandler
+    events:
+      - http:
+          path: room
+          method: any
+          cors: true
 
 resources:
   Resources:
