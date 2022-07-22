@@ -16,7 +16,7 @@ exports.websocketHandler = async (event: any, context: any, callback: any) => {
     try {
         const userRepo = UserRepository.getInstance()
         if(event.requestContext.eventType === "CONNECT"){
-            const user = await userRepo.createUserById(event.requestContext.connectionId)
+            const user = await userRepo.createUser(event.requestContext.connectionId)
             console.log(user)
             
         } else {

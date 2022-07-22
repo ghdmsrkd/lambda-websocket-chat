@@ -17,15 +17,16 @@ export default class UserRepository {
     return this.instance
   }
 
-  createUserById = async (id: string) => {
+  createUser = async (connection_id: string, room_id: string, user_id: string) => {
     return await this.dbInstance.create({
-      user_id: id,
-      user_name: "name",
+      connection_id,
+      room_id,
+      user_id,
     })
   }
 
   getUserById = async (id: string) => {
-    return await this.dbInstance.get({ user_id: id })
+    return await this.dbInstance.get({ connection_id: id })
   }
 
   deleteUserById = async (id: string) => {
