@@ -41,7 +41,9 @@ exports.sendMessageHandler = async (event: any, context: any, callback: any) => 
     // console.log(event)
     console.log(`${event.requestContext.eventType} : ${event.requestContext.connectionId}`)
 
-    const dt = { ConnectionId: event.requestContext.connectionId, Data: JSON.stringify("메시지~") };
+    const requestBody = JSON.parse(event.body)
+    console.log(JSON.stringify(requestBody.message))
+    const dt = { ConnectionId: event.requestContext.connectionId, Data: JSON.stringify(requestBody.message) };
     try {
         await apiGatewayManagementApi.postToConnection(dt).promise();
         return {
