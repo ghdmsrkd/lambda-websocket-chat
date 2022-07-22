@@ -10,17 +10,18 @@ const apiGatewayManagementApi = new AWS.ApiGatewayManagementApi({
 exports.websocketHandler = async (event: any, context: any, callback: any) => {
     // console.log(event)
     console.log(`${event.requestContext.eventType} : ${event.requestContext.connectionId}`)
+
+    const connection_id = event.requestContext.connectionId
     const { room_id, user_id } = event.queryStringParameters
-    console.log(room_id, user_id)
 
     try {
         const userRepo = UserRepository.getInstance()
         if(event.requestContext.eventType === "CONNECT"){
-            const user = await userRepo.createUser(event.requestContext.connectionId)
+            const user = await userRepo.createUser(connection_id, room_id, user_id)
             console.log(user)
             
         } else {
-            const user = await userRepo.deleteUserById(event.requestContext.connectionId)
+            const user = await userRepo.deleteUserById(connection_id)
             console.log(user)
         }
 
