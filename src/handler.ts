@@ -10,6 +10,8 @@ const apiGatewayManagementApi = new AWS.ApiGatewayManagementApi({
 exports.websocketHandler = async (event: any, context: any, callback: any) => {
     // console.log(event)
     console.log(`${event.requestContext.eventType} : ${event.requestContext.connectionId}`)
+    const { room_id, user_id } = event.queryStringParameters
+    console.log(room_id, user_id)
 
     try {
         const userRepo = UserRepository.getInstance()
