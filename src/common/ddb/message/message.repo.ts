@@ -2,7 +2,6 @@ import * as dynamoose from "dynamoose"
 import { MessageModel } from "./message.model"
 import { Model } from "dynamoose/dist/Model"
 import { MessageSchema } from "./message.schema"
-import * as uuid from "uuid"
 
 export default class MessageRepository {
   private dbInstance: Model<MessageModel>
