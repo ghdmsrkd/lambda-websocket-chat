@@ -1,6 +1,7 @@
 import * as ddb from "./common/ddb"
 import UserRepository from "./common/ddb/user/user.repo"
 import * as AWS from "aws-sdk"
+import { getResponse } from "./common/util/response";
 
 const apiGatewayManagementApi = new AWS.ApiGatewayManagementApi({
     apiVersion: '2018-11-29',
@@ -19,24 +20,16 @@ exports.websocketHandler = async (event: any, context: any, callback: any) => {
         if(event.requestContext.eventType === "CONNECT"){
             const user = await userRepo.createUser(connection_id, room_id, user_id)
             console.log(user)
-            
+            return getResponse("success", "connect")
         } else {
             const user = await userRepo.deleteUserById(connection_id)
             console.log(user)
+            return getResponse("success", "disconnect")
         }
-
-        return {
-            isBase64Encoded: true,
-            statusCode: 200,
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Access-Control-Expose-Headers": "*",
-                "Access-Control-Allow-Origin": "*",
-            },
-            body: "ok"
-        }
+        
     } catch (error) {
         console.log(error)
+        return getResponse("fail", error, 500)
     }
 }
 
@@ -49,18 +42,10 @@ exports.sendMessageHandler = async (event: any, context: any, callback: any) => 
     const dt = { ConnectionId: event.requestContext.connectionId, Data: JSON.stringify(requestBody.message) };
     try {
         await apiGatewayManagementApi.postToConnection(dt).promise();
-        return {
-            isBase64Encoded: true,
-            statusCode: 200,
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Access-Control-Expose-Headers": "*",
-                "Access-Control-Allow-Origin": "*",
-            },
-            body: "ok"
-        }
+        return getResponse("success", "sendMessage")
     } catch (error) {
-        console.log(error);
+        console.log(error)
+        return getResponse("fail", error, 500)
     }
     
 }
