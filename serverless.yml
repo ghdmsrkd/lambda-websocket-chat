@@ -36,14 +36,60 @@ functions:
 
 resources:
   Resources:
+    # 유저 테이블
     UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
+        TableName: CHAT_USER
         AttributeDefinitions:
+          - AttributeName: connection_id 
+            AttributeType: S
+          - AttributeName: room_id
+            AttributeType: S
           - AttributeName: user_id
             AttributeType: S
         KeySchema:
-          - AttributeName: user_id
+          - AttributeName: connection_id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-        TableName: CHAT_USER
+        GlobalSecondaryIndexes:
+          - IndexName: room_id-user_id-index
+            KeySchema:
+              - AttributeName: room_id
+                KeyType: HASH
+              - AttributeName: user_id
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+    # 체팅방 테이블
+    RoomTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: CHAT_ROOM
+        AttributeDefinitions:
+          - AttributeName: room_id 
+            AttributeType: S
+          - AttributeName: created_at
+            AttributeType: N
+        KeySchema:
+          - AttributeName: room_id
+            KeyType: HASH
+          - AttributeName: created_at
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+    # 메시지 테이블
+    MessageTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: CHAT_MESSAGE
+        AttributeDefinitions:
+          - AttributeName: room_id 
+            AttributeType: S
+          - AttributeName: created_at
+            AttributeType: N
+        KeySchema:
+          - AttributeName: room_id
+            KeyType: HASH
+          - AttributeName: created_at
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
