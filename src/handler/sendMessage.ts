@@ -19,7 +19,7 @@ export const sendMessageHandler = async (event: any, context: any, callback: any
         console.log(body)
 
         const messageRepo = MessageRepository.getInstance()
-        await messageRepo.createMessage(body.user_id, body.user_id, body.message)
+        await messageRepo.createMessage(body.room_id, body.user_id, body.message)
         
         const userRepo = UserRepository.getInstance()
         const joinedUsers = await userRepo.getUsersByRoomId(body.room_id)

@@ -17,7 +17,7 @@ export default class MessageRepository {
     return this.instance
   }
 
-  createMessage = async (room_id: string,user_id: string, message: string) => {
+  createMessage = async (room_id: string, user_id: string, message: string) => {
     return await this.dbInstance.create({
       room_id,
       created_at: Number(new Date()),
