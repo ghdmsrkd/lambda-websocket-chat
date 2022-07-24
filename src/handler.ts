@@ -24,8 +24,8 @@ exports.websocketHandler = async (event: any, context: any, callback: any) => {
             console.log(user)
             return getResponse("success", "connect")
         } else {
-            // const user = await userRepo.deleteUserById(connection_id)
-            // console.log(user)
+            const user = await userRepo.deleteUserById(connection_id)
+            console.log(user)
             return getResponse("success", "disconnect")
         }
         
@@ -55,17 +55,13 @@ exports.sendMessageHandler = async (event: any, context: any, callback: any) => 
         const messageRepo = MessageRepository.getInstance()
 
         const joinedUsers = await userRepo.getUsersByRoomId(body.room_id)
-        // console.log(joinedUsers)
-
-
         const joinedConnectionIds = joinedUsers.map(user => {
             return user.connection_id
         })
 
         const websocket = WebsocketClient.getInstance()
         for(const connectionId of joinedConnectionIds) {
-            const result = await websocket.sendMessage(connectionId, body)
-            console.log(result)
+            await websocket.sendMessage(connectionId, body)
         }
         return getResponse("success", "sendMessage")
     } catch (error) {

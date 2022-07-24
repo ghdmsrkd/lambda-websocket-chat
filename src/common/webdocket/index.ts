@@ -1,4 +1,5 @@
 import * as AWS from "aws-sdk"
+import UserRepository from "../ddb/user/user.repo"
 
 export class WebsocketClient {
   static instance: WebsocketClient
@@ -24,9 +25,16 @@ export class WebsocketClient {
   }
 
   async sendMessage(id: string, data: any) {
-    return await this.apiGatewayManagementApi.postToConnection({
-      ConnectionId: id,
-      Data: JSON.stringify(data)
-    }).promise();
+    try {
+      await this.apiGatewayManagementApi.postToConnection({
+        ConnectionId: id,
+        Data: JSON.stringify(data)
+      }).promise();
+    } catch (error) {
+      console.error(`${id} <= This user is disconnected`)
+      const userRepo = UserRepository.getInstance()
+      userRepo.deleteUserById(id)
+    }
+    return 
   }
 }
