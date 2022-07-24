@@ -51,9 +51,10 @@ exports.sendMessageHandler = async (event: any, context: any, callback: any) => 
         const body: TSendMessageBody = JSON.parse(event.body)
         console.log(body)
 
-        const userRepo = UserRepository.getInstance()
         const messageRepo = MessageRepository.getInstance()
+        await messageRepo.createMessage(body.user_id, body.user_id, body.message)
 
+        const userRepo = UserRepository.getInstance()
         const joinedUsers = await userRepo.getUsersByRoomId(body.room_id)
         const joinedConnectionIds = joinedUsers.map(user => {
             return user.connection_id
