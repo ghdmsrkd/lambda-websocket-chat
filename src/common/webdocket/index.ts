@@ -1,13 +1,14 @@
 import * as AWS from "aws-sdk"
 import UserRepository from "../ddb/user/user.repo"
 
+console.log(process.env)
 export class WebsocketClient {
   static instance: WebsocketClient
   private apiGatewayManagementApi: AWS.ApiGatewayManagementApi
   private constructor() {
     this.apiGatewayManagementApi = new AWS.ApiGatewayManagementApi({
       apiVersion: '2018-11-29',
-      endpoint: 'http://localhost:3001',
+      endpoint: process.env.CONNECTION_URL,
     })
   }
 
@@ -51,7 +52,8 @@ export class WebsocketClient {
         Data: JSON.stringify(data)
       }).promise();
     } catch (error) {
-      console.error(`${id} <= This user is disconnected`)
+      console.error(error)
+      console.log(`${id} <= This user is disconnected`)
       const userRepo = UserRepository.getInstance()
       userRepo.deleteUserById(id)
     }

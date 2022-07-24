@@ -2,6 +2,7 @@ service: lambda-websocket-chat
 frameworkVersion: '3'
 
 plugins:
+  - serverless-dotenv-plugin
   - serverless-plugin-typescript
   - serverless-offline
 
@@ -14,10 +15,9 @@ provider:
       statements:
         - Effect: "Allow"
           Action:
-            - "logs:CreateLogGroup"
-            - "logs:CreateLogStream"
-            - "logs:PutLogEvents"
+            - "logs:*"
             - "dynamodb:*"
+            - "execute-api:*"
           Resource: "*"
 
 functions:
