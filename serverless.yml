@@ -22,25 +22,25 @@ provider:
 
 functions:
   websocketHandler:
-    handler: src/handler.websocketHandler
+    handler: src/handler/index.websocketHandler
     events:
       - websocket:
           route: $disconnect
       - websocket:
           route: $connect
   websocketDefaultHandler:
-    handler: src/handler.websocketDefaultHandler
+    handler: src/handler/index.websocketDefaultHandler
     events:
       - websocket:
           route: $default
 
   sendMessageHandler:
-    handler: src/handler.sendMessageHandler
+    handler: src/handler/index.sendMessageHandler
     events:
       - websocket:
           route: sendMessage
   roomHandler:
-    handler: src/handler.roomHandler
+    handler: src/handler/index.roomHandler
     events:
       - http:
           path: room
