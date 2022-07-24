@@ -9,6 +9,11 @@ const apiGatewayManagementApi = new AWS.ApiGatewayManagementApi({
     endpoint: 'http://localhost:3001',
 });
 
+exports.websocketDefaultHandler = async (event: any, context: any, callback: any) => {
+    console.log(event)
+    return getResponse("success", "This is default route. You should set abled route")
+}
+
 exports.websocketHandler = async (event: any, context: any, callback: any) => {
     // console.log(event)
     console.log(`${event.requestContext.eventType} : ${event.requestContext.connectionId}`)
