@@ -29,6 +29,10 @@ export default class UserRepository {
     return await this.dbInstance.get({ connection_id: id })
   }
 
+  getUsersByRoomId = async (room_id: string) => {
+    return await this.dbInstance.query("room_id").eq(room_id).exec()
+  }
+
   deleteUserById = async (id: string) => {
     const user = await this.getUserById(id)
     await this.dbInstance.delete(id)
