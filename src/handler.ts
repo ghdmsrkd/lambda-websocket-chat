@@ -18,14 +18,23 @@ exports.websocketHandler = async (event: any, context: any, callback: any) => {
 
     try {
         const userRepo = UserRepository.getInstance()
-        if(event.requestContext.eventType === "CONNECT"){
+        const websocket = WebsocketClient.getInstance()
+
+        if(event.requestContext.eventType === "CONNECT"){ // 연결 할때
             const { room_id, user_id } = event.queryStringParameters
+            const joinedUserExceptMe = await userRepo.getUsersByRoomId(room_id)
             const user = await userRepo.createUser(connection_id, room_id, user_id)
-            console.log(user)
+
+            for(const joinedUser of joinedUserExceptMe){
+                await websocket.joinedRoom(joinedUser.connection_id, user_id)
+            }
             return getResponse("success", "connect")
-        } else {
+        } else { // 연결 끊을 때
             const user = await userRepo.deleteUserById(connection_id)
-            console.log(user)
+            const remainUsers = await userRepo.getUsersByRoomId(user.room_id)
+            for(const joinedUser of remainUsers){
+                await websocket.leavedRoom(joinedUser.connection_id, user.user_id)
+            }
             return getResponse("success", "disconnect")
         }
         
@@ -53,7 +62,7 @@ exports.sendMessageHandler = async (event: any, context: any, callback: any) => 
 
         const messageRepo = MessageRepository.getInstance()
         await messageRepo.createMessage(body.user_id, body.user_id, body.message)
-
+        
         const userRepo = UserRepository.getInstance()
         const joinedUsers = await userRepo.getUsersByRoomId(body.room_id)
         const joinedConnectionIds = joinedUsers.map(user => {

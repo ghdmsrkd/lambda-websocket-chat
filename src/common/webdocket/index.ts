@@ -24,6 +24,26 @@ export class WebsocketClient {
     await this.apiGatewayManagementApi.deleteConnection({ConnectionId: id}).promise()
   }
 
+  async joinedRoom(connection: string, user_id: string) {
+    const data = {
+      action: "sendMessage",
+      room_id: "",
+      user_id: user_id,
+      message: `'${user_id}' 님이 입장하셨습니다.`
+    }
+    this.sendMessage(connection, data)
+  }
+
+  async leavedRoom(connection: string, user_id: string) {
+    const data = {
+      action: "sendMessage",
+      room_id: "",
+      user_id: user_id,
+      message: `'${user_id}' 님이 떠나셨습니다.`
+    }
+    this.sendMessage(connection, data)
+  }
+
   async sendMessage(id: string, data: any) {
     try {
       await this.apiGatewayManagementApi.postToConnection({
@@ -35,6 +55,5 @@ export class WebsocketClient {
       const userRepo = UserRepository.getInstance()
       userRepo.deleteUserById(id)
     }
-    return 
   }
 }
