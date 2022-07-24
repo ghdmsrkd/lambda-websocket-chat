@@ -46,6 +46,13 @@ functions:
           path: room
           method: any
           cors: true
+  messageHandler:
+    handler: src/handler/index.messageHandler
+    events:
+      - http:
+          path: message
+          method: any
+          cors: true
 
 resources:
   Resources:

@@ -27,7 +27,7 @@ export default class MessageRepository {
   }
 
   getMessages = async  (room_id: string) => {
-    return await this.dbInstance.query("room_id").sort("ascending").exec()
+    return await this.dbInstance.query("room_id").eq(room_id).sort("ascending").exec()
   }
 
 }
