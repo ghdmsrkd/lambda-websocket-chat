@@ -1,13 +1,9 @@
 import * as ddb from "./common/ddb"
 import UserRepository from "./common/ddb/user/user.repo"
-import * as AWS from "aws-sdk"
 import { getResponse } from "./common/util/response";
 import RoomRepository from "./common/ddb/room/room.repo";
-
-const apiGatewayManagementApi = new AWS.ApiGatewayManagementApi({
-    apiVersion: '2018-11-29',
-    endpoint: 'http://localhost:3001',
-});
+import MessageRepository from "./common/ddb/message/message.repo";
+import { WebsocketClient } from "./common/webdocket";
 
 exports.websocketDefaultHandler = async (event: any, context: any, callback: any) => {
     console.log(event)
@@ -28,8 +24,8 @@ exports.websocketHandler = async (event: any, context: any, callback: any) => {
             console.log(user)
             return getResponse("success", "connect")
         } else {
-            const user = await userRepo.deleteUserById(connection_id)
-            console.log(user)
+            // const user = await userRepo.deleteUserById(connection_id)
+            // console.log(user)
             return getResponse("success", "disconnect")
         }
         
@@ -51,11 +47,26 @@ exports.sendMessageHandler = async (event: any, context: any, callback: any) => 
     // console.log(event)
     console.log(`${event.requestContext.eventType} : ${event.requestContext.connectionId}`)
 
-    const body: TSendMessageBody = JSON.parse(event.body)
-    console.log(JSON.stringify(body.message))
-    const dt = { ConnectionId: event.requestContext.connectionId, Data: JSON.stringify(body.message) };
     try {
-        await apiGatewayManagementApi.postToConnection(dt).promise();
+        const body: TSendMessageBody = JSON.parse(event.body)
+        console.log(body)
+
+        const userRepo = UserRepository.getInstance()
+        const messageRepo = MessageRepository.getInstance()
+
+        const joinedUsers = await userRepo.getUsersByRoomId(body.room_id)
+        // console.log(joinedUsers)
+
+
+        const joinedConnectionIds = joinedUsers.map(user => {
+            return user.connection_id
+        })
+
+        const websocket = WebsocketClient.getInstance()
+        for(const connectionId of joinedConnectionIds) {
+            const result = await websocket.sendMessage(connectionId, body)
+            console.log(result)
+        }
         return getResponse("success", "sendMessage")
     } catch (error) {
         console.log(error)
