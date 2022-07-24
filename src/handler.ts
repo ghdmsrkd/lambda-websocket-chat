@@ -19,11 +19,11 @@ exports.websocketHandler = async (event: any, context: any, callback: any) => {
     console.log(`${event.requestContext.eventType} : ${event.requestContext.connectionId}`)
 
     const connection_id = event.requestContext.connectionId
-    const { room_id, user_id } = event.queryStringParameters
 
     try {
         const userRepo = UserRepository.getInstance()
         if(event.requestContext.eventType === "CONNECT"){
+            const { room_id, user_id } = event.queryStringParameters
             const user = await userRepo.createUser(connection_id, room_id, user_id)
             console.log(user)
             return getResponse("success", "connect")
